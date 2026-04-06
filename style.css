@@ -16,6 +16,46 @@ body{
     width:320px;
     border-radius:20px;
 }
+/* MOBILE RESPONSIVE */
+
+@media(max-width:768px){
+
+    .title{
+        font-size:28px;
+    }
+
+    #timer{
+        font-size:18px !important;
+    }
+
+    .board{
+        width:100%;
+        grid-template-columns:repeat(3,1fr);
+        gap:10px;
+        padding:10px;
+    }
+
+    .card-box{
+        height:80px;
+    }
+
+    #resultMsg{
+        font-size:35px;
+    }
+
+    #thought{
+        font-size:14px;
+    }
+
+    .login-card{
+        width:90%;
+    }
+}
+
+/* center fix */
+.board{
+    max-width:400px;
+}
 
 /* TITLE */
 .title{
