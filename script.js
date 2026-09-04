@@ -6,69 +6,73 @@ function login(){
 }
 
 // SOUND
-const clickSound=new Audio("sounds/click.mp3");
-const matchSound=new Audio("sounds/match.mp3");
-const wrongSound=new Audio("sounds/wrong.mp3");
-const winSound=new Audio("sounds/win.mp3");
+const clickSound = new Audio("sounds/click.mp3");
+const matchSound = new Audio("sounds/match.mp3");
+const wrongSound = new Audio("sounds/wrong.mp3");
+const winSound = new Audio("sounds/win.mp3");
 
 function play(s){
-    s.currentTime=0;
+    s.currentTime = 0;
     s.play();
 }
 
 // IMAGES
-let images=[
-"images/img1.jpg","images/img2.jpg","images/img3.jpg",
-"images/img4.jpg","images/img5.jpg","images/img6.jpg"
+let images = [
+    "images/img1.jpg","images/img2.jpg","images/img3.jpg",
+    "images/img4.jpg","images/img5.jpg","images/img6.jpg"
 ];
 
-// GAME
-let first,second,lock=false,matches=0;
-let time=90,timer;
+// GAME VARIABLES
+let first, second, lock = false, matches = 0;
+let time = 90, timer;
 
 function startGame(){
-    document.getElementById("resultPage").style.display="none";
-    document.getElementById("gamePage").style.display="block";
+    document.getElementById("resultPage").style.display = "none";
+    document.getElementById("gamePage").style.display = "block";
 
-    let board=document.getElementById("board");
-    board.innerHTML="";
+    let board = document.getElementById("board");
+    board.innerHTML = "";
 
-    matches=0;
-    first=null;
-    second=null;
-    lock=false;
+    matches = 0;
+    first = null;
+    second = null;
+    lock = false;
 
-    let cards=[...images,...images].sort(()=>0.5-Math.random());
+    // कार्ड्स रँडम (Randomize) करणे
+    let cards = [...images, ...images].sort(() => 0.5 - Math.random());
 
-    cards.forEach(src=>{
-        let c=document.createElement("div");
-        c.className="card-box";
+    cards.forEach(src => {
+        let c = document.createElement("div");
+        c.className = "card-box";
 
-        let img=document.createElement("img");
-        img.src=src;
+        let img = document.createElement("img");
+        img.src = src;
 
         c.appendChild(img);
-        c.onclick=()=>flip(c);
+        c.onclick = () => flip(c);
 
         board.appendChild(c);
     });
 
-    time=90;
+    // ९० सेकंदांचा काउंटडाऊन टायमर
+    time = 90;
+    document.getElementById("timer").innerText = "⏱ " + time + "s";
     clearInterval(timer);
 
-    timer=setInterval(()=>{
+    timer = setInterval(() => {
         time--;
-        document.getElementById("timer").innerText="⏱ "+time;
+        document.getElementById("timer").innerText = "⏱ " + time + "s";
 
-        if(time<=0){
+        // जर वेळ संपली तर गेम फेल होईल
+        if(time <= 0){
             clearInterval(timer);
             play(wrongSound);
-            showResult("❌ FAILED");
+            showResult("❌ TIME UP! FAILED");
         }
-    },1000);
+    }, 1000);
 }
 
-// FLIP
+// FLIP CARD LOGIC
 function flip(card){
     if(lock || card.classList.contains("show")) return;
 
@@ -76,55 +80,57 @@ function flip(card){
     card.classList.add("show");
 
     if(!first){
-        first=card;
+        first = card;
         return;
     }
 
-    second=card;
-    lock=true;
+    second = card;
+    lock = true;
 
-    let a=first.querySelector("img").src;
-    let b=second.querySelector("img").src;
+    let a = first.querySelector("img").src;
+    let b = second.querySelector("img").src;
 
-    if(a===b){
+    if(a === b){
         play(matchSound);
         matches++;
         reset();
 
-        if(matches===6){
-            clearInterval(timer);
+        // जर सर्व ६ जोड्या (Matches) वेळेच्या आत जुळल्या
+        if(matches === 6){
+            clearInterval(timer); // टायमर थांबवणे
             play(winSound);
-            showResult("🏆 WINNER!");
+            let timeTaken = 90 - time; // किती सेकंदात पूर्ण केले
+            showResult(`🏆 WINNER! (Completed in ${timeTaken} seconds)`);
         }
-    }else{
+    } else {
         play(wrongSound);
-        setTimeout(()=>{
+        setTimeout(() => {
             first.classList.remove("show");
             second.classList.remove("show");
             reset();
-        },800);
+        }, 800);
     }
 }
 
 function reset(){
-    first=null;
-    second=null;
-    lock=false;
+    first = null;
+    second = null;
+    lock = false;
 }
 
-// RESULT
+// RESULT DISPLAY
 function showResult(msg){
-    document.getElementById("gamePage").style.display="none";
-    document.getElementById("resultPage").style.display="flex";
+    document.getElementById("gamePage").style.display = "none";
+    document.getElementById("resultPage").style.display = "flex";
 
-    let thoughts=[
+    let thoughts = [
         "🔥 Keep pushing your limits!",
         "💪 You are improving!",
         "🚀 Success needs consistency!",
         "🌟 Believe in yourself!"
     ];
 
-    document.getElementById("resultMsg").innerText=msg;
-    document.getElementById("thought").innerText=
-        thoughts[Math.floor(Math.random()*thoughts.length)];
+    document.getElementById("resultMsg").innerText = msg;
+    document.getElementById("thought").innerText =
+        thoughts[Math.floor(Math.random() * thoughts.length)];
 }
